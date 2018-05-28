@@ -1,0 +1,74 @@
+#+ summary: Creates search query from keywordlist
+#+ idField: id
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX bif: <bif:>
+
+SELECT
+  (SAMPLE(?id) as ?id)
+  ?title
+  ?abstract
+  ?creator
+  ?date
+  ?type
+  ?source
+  (group_concat(?subject;separator="; ") as ?subjects)
+  (group_concat(?format;separator="; ") as ?formats)
+
+WHERE {
+  {
+    SELECT DISTINCT ?id WHERE {
+      {
+        ?id dcterms:title ?title .
+        ?title bif:contains ?_keywordsList .
+      }
+      UNION {
+        ?id dcterms:abstract ?abstract .
+        ?abstract bif:contains ?_keywordsList .
+      }
+
+      #UNION {
+      # dcterms:description breaks query (and actually crashes virtuoso -- not sure why)
+      # leaving dcterms:description
+      #  ?id dcterms:description ?description .
+      #  ?description bif:contains "Beatrix" .
+      #}
+
+
+    } LIMIT 100
+  }
+  OPTIONAL {
+    ?id dcterms:title ?title .
+    FILTER (lang(?title) = "" || lang(?title) = "nl")
+  }.
+  OPTIONAL {
+    ?id dcterms:abstract ?abstract
+    FILTER (lang(?abstract) = "" || lang(?abstract) = "nl")
+  }.
+  OPTIONAL {
+    ?id dcterms:creator	?creator
+    FILTER (lang(?creator) = "" || lang(?creator) = "nl")
+  }.
+  OPTIONAL {
+    ?id dcterms:date	?date
+  }.
+  OPTIONAL {
+    ?id dcterms:type	?type
+  }.
+
+  OPTIONAL {
+    ?id dcterms:source	?source
+    FILTER (lang(?source) = "" || lang(?source) = "nl")
+  }.
+
+  OPTIONAL {
+    ?id dcterms:subject	?subject
+    FILTER (lang(?subject) = "" || lang(?subject) = "nl")
+  }.
+  OPTIONAL {
+    ?id dcterms:hasFormat ?format
+  }.
+
+}
+GROUP BY ?id ?title ?abstract ?creator ?date ?type ?source
+
