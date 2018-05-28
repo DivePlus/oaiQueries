@@ -1,4 +1,4 @@
-#+ summary: Creates search query from keywordlist
+#+ summary: Returns related entities
 #+ idField: id
 
 PREFIX dcterms: <http://purl.org/dc/terms/>
@@ -18,24 +18,11 @@ SELECT
 WHERE {
   {
     SELECT DISTINCT ?id WHERE {
-      {
-        ?id dcterms:title ?title .
-        ?title bif:contains ?_keywordsList .
-      }
-      UNION {
-        ?id dcterms:abstract ?abstract .
-        ?abstract bif:contains ?_keywordsList .
-      }
-
-      #UNION {
-      # dcterms:description breaks query (and actually crashes virtuoso -- not sure why)
-      # leaving dcterms:description
-      #  ?id dcterms:description ?description .
-      #  ?description bif:contains "Beatrix" .
-      #}
-
-
-    } LIMIT 100
+      ?_id_iri dcterms:subject ?subject .
+      FILTER (lang(?subject) = "" || lang(?subject) = "nl") .
+      ?id dcterms:subject ?subject
+      FILTER(?id != ?_id_iri)
+    }
   }
   OPTIONAL {
     ?id dcterms:title ?title .
