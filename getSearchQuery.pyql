@@ -9,23 +9,21 @@ def getValue(item, key):
 data = dataIn['results']['bindings']
 result = { "data": [
                   select {
-                    'relations': 'Matches query,',
+                    'relations': ['Matches query'],
                     'entity'   : entity
 
                   }
                   for item in data
-                  let relations = try item['relations']['value'].strip(',').split(',') except ''
                   let entity = {
                     'id'         : getValue(item, 'id'),
                     'type'       : getValue(item, 'type'),
                     'title'      : getValue(item, 'title'),
                     'thumbnail'  : 'dont-know',
                     'source'     : getValue(item, 'source'),
-                    'media'      : 'dont-know',
+                    'media'      : '',
                     'dateStart'  : getValue(item, 'date'),
                     'description': getValue(item, 'issue'),
-                    'metadataarray': try getValue(item,'metadataarray').split(';') except ':-()'
+                    'metadataarray': []
                   }
-                  let metadata = 'define metadata...'
 ]}
 dataOut = result
