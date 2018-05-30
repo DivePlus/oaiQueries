@@ -1,0 +1,21 @@
+from pythonql.Executor import *
+
+def getValue(item, key):
+  try:
+    return item[key]['value']
+  except:
+    return None
+
+data = dataIn['results']['bindings']
+result = { "data": [
+                  select {
+                    'type': typeName,
+                    'count': typeCount,
+                    'title': typeName,
+                    'description': 'Objects of type ' + typeName
+                  }
+                  for item in data
+                  let typeName = getValue(item, 'type')
+                  let typeCount = try int(getValue(item, 'count')) except 0
+]}
+dataOut = result

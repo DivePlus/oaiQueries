@@ -1,0 +1,56 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX bif: <bif:>
+
+SELECT
+  (SAMPLE(?idInternal) as ?id)
+  ?title
+  ?abstract
+  ?creator
+  ?date
+  ?type
+  ?source
+  (group_concat(DISTINCT ?subject;separator="; ") as ?subjects)
+  (group_concat(DISTINCT ?format;separator="; ") as ?formats)
+WHERE {
+  {
+    SELECT DISTINCT ?idInternal
+    WHERE {
+      ?idInternal ?p ?o
+      FILTER(?idInternal = ?_id_iri)
+    }
+  }
+
+  OPTIONAL {
+    ?idInternal dcterms:title ?title .
+    FILTER (lang(?title) = "" || lang(?title) = "nl")
+  }.
+  OPTIONAL {
+    ?idInternal dcterms:abstract ?abstract
+    FILTER (lang(?abstract) = "" || lang(?abstract) = "nl")
+  }.
+  OPTIONAL {
+    ?idInternal dcterms:creator	?creator
+    FILTER (lang(?creator) = "" || lang(?creator) = "nl")
+  }.
+  OPTIONAL {
+    ?idInternal dcterms:date	?date
+  }.
+  OPTIONAL {
+    ?idInternal dcterms:type	?type
+  }.
+
+  OPTIONAL {
+    ?idInternal dcterms:source	?source
+    FILTER (lang(?source) = "" || lang(?source) = "nl")
+  }.
+
+  OPTIONAL {
+    ?idInternal dcterms:subject	?subject
+    FILTER (lang(?subject) = "" || lang(?subject) = "nl")
+  }.
+  OPTIONAL {
+    ?idInternal dcterms:hasFormat ?format
+  }.
+
+}
+GROUP BY ?idInternal ?title ?abstract ?creator ?date ?type ?source

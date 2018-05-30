@@ -1,0 +1,8 @@
+#+ summary: Returns a list of statistics
+
+PREFIX dcterms: <http://purl.org/dc/terms/>
+
+SELECT ?type (COUNT(?item) as ?count)
+WHERE {
+  ?item dcterms:type ?type
+} GROUP BY ?type
