@@ -22,7 +22,7 @@ result = { "data": [
                     'source'     : getValue(item, 'source'),
                     'media'      : '',
                     'dateStart'  : getValue(item, 'date'),
-                    'description': getValue(item, 'issue'),
+                    'description': '',
                     'metadataarray': []
                   }
                   let metadata = 'define metadata...'
